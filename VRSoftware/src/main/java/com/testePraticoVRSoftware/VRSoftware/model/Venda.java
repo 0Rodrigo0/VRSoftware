@@ -25,21 +25,20 @@ public class Venda {
 
 	@Id
 	@GeneratedValue(generator = "uuid2")
-	public UUID id;
+	private UUID id;
 
 	@ManyToOne
 	@JoinColumn(name = "cliente_id", nullable = false)
-	public Cliente cliente;
+	private Cliente cliente;
 
 	@Column(nullable = false)
-	public LocalDate dataVenda;
+	private LocalDate dataVenda;
 
 	@Column(nullable = false)
-	public BigDecimal valorTotal;
+	private BigDecimal valorTotal;
 
 	@ManyToMany
-	@JoinTable(name = "venda_produto", joinColumns = @JoinColumn(name = "venda_id"),
-	           inverseJoinColumns = @JoinColumn(name = "produto_id"))
-	public List<Produto> produtos;
+	@JoinTable(name = "venda_produto", joinColumns = @JoinColumn(name = "venda_id"), inverseJoinColumns = @JoinColumn(name = "produto_id"))
+	private List<Produto> produtos;
 
 }

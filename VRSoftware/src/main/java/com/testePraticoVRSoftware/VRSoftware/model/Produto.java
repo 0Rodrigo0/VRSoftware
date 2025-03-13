@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +33,7 @@ public class Produto {
     private BigDecimal preco;
 	
 	@ManyToMany(mappedBy = "produtos")
+	@JsonIgnore
     private List<Venda> vendas;
-
+		
 }

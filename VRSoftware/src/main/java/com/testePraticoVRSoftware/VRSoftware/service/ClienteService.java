@@ -22,22 +22,18 @@ public class ClienteService {
 	@Inject
 	private VendaRepository vendaRepository;
 
-	// Cadastra cliente
 	public Cliente salvarCliente(Cliente cliente) {
 		return clienteRepository.save(cliente);
 	}
 
-	// Lista cliente por id
 	public Optional<Cliente> buscarPorId(UUID id) {
 		return clienteRepository.findById(id);
 	}
 
-	// Listar Todos os Clientes
 	public List<Cliente> listarTodos() {
 		return clienteRepository.findAll();
 	}
 
-	// Atualizar Cliente
 	public Optional<Cliente> atualizarCliente(UUID id, Cliente clienteAtualizado) {
 		return clienteRepository.findById(id).map(cliente -> {
 			cliente.setNome(clienteAtualizado.getNome());
@@ -47,7 +43,6 @@ public class ClienteService {
 		});
 	}
 
-	// Excluir Cliente
 	@Transactional
 	public void excluirCliente(UUID clienteId) {
 		vendaRepository.deletarVendasPorCliente(clienteId);

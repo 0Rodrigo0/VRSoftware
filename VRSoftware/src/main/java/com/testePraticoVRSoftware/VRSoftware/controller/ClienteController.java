@@ -28,33 +28,28 @@ public class ClienteController {
 	@Inject
 	private ClienteService clienteService;
 
-	// Cadastra cliente
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cliente incluirCliente(@RequestBody Cliente cliente) {
 		return clienteService.salvarCliente(cliente);
 	}
 
-	// Lista cliente por id
 	@GetMapping("/{id}")
 	public Optional<Cliente> consultarCliente(@PathVariable UUID id) {
 		return clienteService.buscarPorId(id);
 	}
 
-	// Lista todos clientes
 	@GetMapping
 	public List<Cliente> listarClientes() {
 		return clienteService.listarTodos();
 	}
 
-	// Alterar Cliente
 	@PutMapping("/{id}")
 	public ResponseEntity<Cliente> alterarCliente(@PathVariable UUID id, @RequestBody Cliente clienteAtualizado) {
 		return clienteService.atualizarCliente(id, clienteAtualizado).map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
-	// Excluir Cliente
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void excluirCliente(@PathVariable UUID id) {

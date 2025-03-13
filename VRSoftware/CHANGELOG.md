@@ -10,3 +10,8 @@ Todas as alterações importantes para este projeto serão documentadas neste ar
 - Implementado CRUD para `Cliente`;
 - Criado repositório no GitHub;
 - Criado Changelog;
+
+## [1.0.2] - 2025-03-13
+
+- Implementado CRUD para `Produto` e `Venda`;
+- Implementado algumas regras do negóocio;

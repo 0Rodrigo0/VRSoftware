@@ -30,4 +30,5 @@ public class Cliente {
 
     @Column(name = "dia_fechamento_fatura", nullable = false)
     private Integer diaFechamentoFatura;
+        
 }
