@@ -13,9 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 public class MainFrame extends JFrame {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 
 	public MainFrame() {
