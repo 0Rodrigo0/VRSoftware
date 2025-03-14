@@ -15,3 +15,8 @@ Todas as alterações importantes para este projeto serão documentadas neste ar
 
 - Implementado CRUD para `Produto` e `Venda`;
 - Implementado algumas regras do negóocio;
+
+## [1.0.3] - 2025-03-14
+
+- finalizada implementação regra de negócio;
+- iniciado criação das classes Swing;
