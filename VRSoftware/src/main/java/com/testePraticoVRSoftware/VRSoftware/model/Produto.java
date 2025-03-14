@@ -4,17 +4,15 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
 
 @Getter
 @Setter
@@ -28,12 +26,13 @@ public class Produto {
 
 	@Column(nullable = false, length = 100)
 	private String descricao;
-	
+
 	@Column(nullable = false)
-    private BigDecimal preco;
-	
-	@ManyToMany(mappedBy = "produtos")
-	@JsonIgnore
-    private List<Venda> vendas;
-		
+	private BigDecimal preco;
+
+	@OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<VendaProduto> vendas;
+
+	private Boolean ativo = true;
+
 }

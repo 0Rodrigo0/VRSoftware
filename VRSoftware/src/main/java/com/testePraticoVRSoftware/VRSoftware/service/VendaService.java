@@ -2,16 +2,20 @@ package com.testePraticoVRSoftware.VRSoftware.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.testePraticoVRSoftware.VRSoftware.DTO.VendaProdutoDTO;
 import com.testePraticoVRSoftware.VRSoftware.model.Cliente;
 import com.testePraticoVRSoftware.VRSoftware.model.Produto;
 import com.testePraticoVRSoftware.VRSoftware.model.Venda;
+import com.testePraticoVRSoftware.VRSoftware.model.VendaProduto;
 import com.testePraticoVRSoftware.VRSoftware.model.VendaProdutoHistorico;
 import com.testePraticoVRSoftware.VRSoftware.repository.ClienteRepository;
 import com.testePraticoVRSoftware.VRSoftware.repository.ProdutoRepository;
@@ -36,27 +40,38 @@ public class VendaService {
 	@Inject
 	private VendaProdutoHistoricoRepository vendaProdutoHistoricoRepository;
 
-	public Venda salvarVenda(Venda venda) {
+	public Venda salvarVenda(Venda venda, List<VendaProdutoDTO> produtos) {
+
+		validarProdutosDuplicados(venda.getProdutos());
 
 		Cliente cliente = clienteRepository.findById(venda.getCliente().getId())
 				.orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
-		List<Produto> produtos = venda.getProdutos().stream()
-				.map(produto -> produtoRepository.findById(produto.getId())
-						.orElseThrow(() -> new RuntimeException("Produto não encontrado: " + produto.getId())))
-				.collect(Collectors.toList());
+		List<VendaProduto> vendaProdutos = venda.getProdutos().stream().map(dto -> {
+			Produto produto = produtoRepository.findById(dto.getId())
+					.orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
-		BigDecimal valorTotal = produtos.stream().map(Produto::getPreco).reduce(BigDecimal.ZERO, BigDecimal::add);
+			VendaProduto vendaProduto = new VendaProduto();
+			vendaProduto.setVenda(venda);
+			vendaProduto.setProduto(produto);
+			vendaProduto.setQuantidade(dto.getQuantidade());
 
-		verificaVencimentoFatura(cliente);
+			return vendaProduto;
+		}).collect(Collectors.toList());
+
+		BigDecimal valorTotal = vendaProdutos.stream()
+				.map(vendaProduto -> vendaProduto.getProduto().getPreco()
+						.multiply(BigDecimal.valueOf(vendaProduto.getQuantidade())))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		venda.setCliente(cliente);
-		venda.setProdutos(produtos);
+		venda.setProdutos(vendaProdutos);
 		venda.setValorTotal(valorTotal);
 		venda.setDataVenda(LocalDate.now());
 		Venda vendaSalva = vendaRepository.save(venda);
 
 		salvarHistoricoVenda(venda);
+		verificaVencimentoFatura(cliente);
 
 		return vendaSalva;
 	}
@@ -95,8 +110,8 @@ public class VendaService {
 			registro.setClienteId(venda.getCliente().getId());
 			registro.setClienteNome(venda.getCliente().getNome());
 			registro.setProdutoId(produto.getId());
-			registro.setProdutoDescricao(produto.getDescricao());
-			registro.setProdutoPreco(produto.getPreco());
+			registro.setProdutoDescricao(produto.getProduto().getDescricao());
+			registro.setProdutoPreco(produto.getProduto().getPreco());
 			registro.setDataVenda(venda.getDataVenda());
 			registro.setValorTotal(venda.getValorTotal());
 			return registro;
@@ -119,8 +134,8 @@ public class VendaService {
 		List<Venda> vendasRealizadas = vendaRepository.findByClienteIdAfterDiaFechamento(cliente.getId(),
 				dataFechamento);
 
-		BigDecimal totalCompras = vendasRealizadas.stream().map(Venda::getValorTotal).reduce(BigDecimal.ZERO,
-				BigDecimal::add);
+		BigDecimal totalCompras = vendasRealizadas.stream().map(Venda::getValorTotal).filter(valor -> valor != null)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		BigDecimal saldoCredito = cliente.getLimiteCompra().subtract(totalCompras);
 
@@ -143,6 +158,23 @@ public class VendaService {
 			proximoFechamento = proximoFechamento.plusMonths(1);
 		}
 		return proximoFechamento;
+	}
+
+	private void validarProdutosDuplicados(List<VendaProduto> produtos) {
+		Map<UUID, Long> produtoQuantidades = new HashMap<>();
+
+		for (VendaProduto vendaProduto : produtos) {
+			if (vendaProduto.getId() != null) {
+				produtoQuantidades.put(vendaProduto.getId(),
+						produtoQuantidades.getOrDefault(vendaProduto.getId(), 0L) + 1);
+			}
+		}
+
+		for (Map.Entry<UUID, Long> entry : produtoQuantidades.entrySet()) {
+			if (entry.getValue() > 1) {
+				throw new IllegalArgumentException("Produto repetido. Utilize o campo quantidade.");
+			}
+		}
 	}
 
 }

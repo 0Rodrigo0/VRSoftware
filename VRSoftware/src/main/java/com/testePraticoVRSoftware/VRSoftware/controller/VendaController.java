@@ -32,7 +32,7 @@ public class VendaController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Venda incluirVenda(@RequestBody Venda venda) {
-		return vendaService.salvarVenda(venda);
+		return vendaService.salvarVenda(venda, null);
 	}
 
 	@GetMapping("/{id}")
