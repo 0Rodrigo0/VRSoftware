@@ -104,21 +104,29 @@ public class VendaService {
 
 	@Transactional
 	public void salvarHistoricoVenda(Venda venda) {
-		List<VendaProdutoHistorico> historico = venda.getProdutos().stream().map(produto -> {
-			VendaProdutoHistorico registro = new VendaProdutoHistorico();
-			registro.setVendaId(venda.getId());
-			registro.setClienteId(venda.getCliente().getId());
-			registro.setClienteNome(venda.getCliente().getNome());
-			registro.setProdutoId(produto.getId());
-			registro.setProdutoDescricao(produto.getProduto().getDescricao());
-			registro.setProdutoPreco(produto.getProduto().getPreco());
-			registro.setDataVenda(venda.getDataVenda());
-			registro.setValorTotal(venda.getValorTotal());
-			return registro;
-		}).collect(Collectors.toList());
+	    List<VendaProdutoHistorico> historico = venda.getProdutos().stream().map(vendaProduto -> {
+	        Produto produto = vendaProduto.getProduto();
+	        Long quantidade = Long.valueOf(vendaProduto.getQuantidade());
+	        BigDecimal precoUnitario = produto.getPreco();
 
-		vendaProdutoHistoricoRepository.saveAll(historico);
+	        BigDecimal valorTotalProduto = precoUnitario.multiply(new BigDecimal(quantidade));
+
+	        VendaProdutoHistorico registro = new VendaProdutoHistorico();
+	        registro.setVendaId(venda.getId());
+	        registro.setClienteId(venda.getCliente().getId());
+	        registro.setClienteNome(venda.getCliente().getNome());
+	        registro.setProdutoId(produto.getId());
+	        registro.setProdutoDescricao(produto.getDescricao());
+	        registro.setProdutoPreco(precoUnitario);
+	        registro.setDataVenda(venda.getDataVenda());
+	        registro.setValorTotal(valorTotalProduto);
+
+	        return registro;
+	    }).collect(Collectors.toList());
+
+	    vendaProdutoHistoricoRepository.saveAll(historico);
 	}
+
 
 	private void verificaVencimentoFatura(Cliente cliente) {
 		LocalDate dataFechamento = calcularDiaVencimento(cliente.getDiaFechamentoFatura());

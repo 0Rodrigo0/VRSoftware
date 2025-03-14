@@ -2,6 +2,8 @@ package com.testePraticoVRSoftware.VRSoftware.model;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,7 @@ public class VendaProduto {
     @GeneratedValue(generator = "uuid2")
     private UUID id;
 
+	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "venda_id", nullable = false)
 	private Venda venda;
