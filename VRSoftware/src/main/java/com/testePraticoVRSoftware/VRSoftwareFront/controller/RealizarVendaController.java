@@ -38,7 +38,8 @@ public class RealizarVendaController {
 				Map<String, Object> vendaData = objectMapper.readValue(vendaSalva, Map.class);
 				String relatorioCredito = (String) vendaData.get("relatorioCredito");
 				if (relatorioCredito != null && !relatorioCredito.isEmpty()) {
-					JOptionPane.showMessageDialog(null, relatorioCredito);
+					JOptionPane.showMessageDialog(null, relatorioCredito, "Alerta de Crédito",
+							JOptionPane.WARNING_MESSAGE);
 				}
 
 			} else {
