@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import com.testePraticoVRSoftware.VRSoftware.model.Cliente;
 import com.testePraticoVRSoftware.VRSoftwareFront.service.CadastroClienteService;
 import com.testePraticoVRSoftware.VRSoftwareFront.view.CadastroClienteFrame;
+import com.testePraticoVRSoftware.VRSoftwareFront.view.RealizarVendaFrame;
 
 public class CadastroClienteController {
 
@@ -18,6 +19,10 @@ public class CadastroClienteController {
 
 	public CadastroClienteController(CadastroClienteFrame cadastroClienteFrame, RestTemplate restTemplate) {
 		this.cadastroClienteFrame = cadastroClienteFrame;
+		this.cadastroClienteService = new CadastroClienteService(restTemplate);
+	}
+	
+	public CadastroClienteController(RealizarVendaFrame realizarVendaFrame, RestTemplate restTemplate) {
 		this.cadastroClienteService = new CadastroClienteService(restTemplate);
 	}
 

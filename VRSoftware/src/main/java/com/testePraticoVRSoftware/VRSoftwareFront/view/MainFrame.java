@@ -53,7 +53,7 @@ public class MainFrame extends JFrame {
 		btnRealizarVenda.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new RealizarVendaFrame().setVisible(true);
+				new RealizarVendaFrame(null).setVisible(true);
 				dispose();
 			}
 		});
