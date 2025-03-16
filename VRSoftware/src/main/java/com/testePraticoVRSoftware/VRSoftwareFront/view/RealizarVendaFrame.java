@@ -6,11 +6,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -34,6 +36,7 @@ import com.testePraticoVRSoftware.VRSoftware.model.Cliente;
 import com.testePraticoVRSoftware.VRSoftware.model.Produto;
 import com.testePraticoVRSoftware.VRSoftwareFront.controller.CadastroClienteController;
 import com.testePraticoVRSoftware.VRSoftwareFront.controller.CadastroProdutoController;
+import com.testePraticoVRSoftware.VRSoftwareFront.controller.RealizarVendaController;
 
 public class RealizarVendaFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -43,10 +46,13 @@ public class RealizarVendaFrame extends JFrame {
 	private DefaultTableModel modeloTabelaClientes;
 	private CadastroProdutoController cadastroProdutoController;
 	private CadastroClienteController cadastroClienteController;
+	private RealizarVendaController realizarVendaController;
 	private DefaultListModel<String> listaModel;
 	private BigDecimal totalCompra = BigDecimal.ZERO;
 	private Map<String, ProdutoSelecionado> produtosSelecionados;
 	private JLabel labelTotal;
+	private JTextField campoClienteSelecionado;
+	private UUID idClienteSelecionado;
 
 	public RealizarVendaFrame(RestTemplate restTemplate) {
 		setTitle("Tela de Vendas");
@@ -57,7 +63,7 @@ public class RealizarVendaFrame extends JFrame {
 
 		cadastroProdutoController = new CadastroProdutoController(this, restTemplate);
 		cadastroClienteController = new CadastroClienteController(this, restTemplate);
-		
+
 		listaModel = new DefaultListModel<>();
 
 		JPanel painelPrincipal = new JPanel(new GridLayout(2, 2, 10, 10));
@@ -84,9 +90,14 @@ public class RealizarVendaFrame extends JFrame {
 		JPanel painelSelecionados = new JPanel(new BorderLayout());
 		painelSelecionados.setBorder(BorderFactory.createTitledBorder("Produtos Selecionados"));
 		JList<String> listaSelecionados = new JList<>(listaModel);
-		JTextField campoQuantidade = new JTextField();
+
+		JPanel painelClienteSelecionado = new JPanel(new BorderLayout());
+		painelClienteSelecionado.setBorder(BorderFactory.createTitledBorder("Cliente Selecionado"));
+		campoClienteSelecionado = new JTextField();
+		painelClienteSelecionado.add(campoClienteSelecionado);
+
 		painelSelecionados.add(new JScrollPane(listaSelecionados), BorderLayout.CENTER);
-		painelSelecionados.add(campoQuantidade, BorderLayout.SOUTH);
+		painelSelecionados.add(painelClienteSelecionado, BorderLayout.SOUTH);
 
 		produtosSelecionados = new HashMap<>();
 
@@ -97,29 +108,31 @@ public class RealizarVendaFrame extends JFrame {
 		JTextField campoPesquisaCliente = new JTextField();
 		modeloTabelaClientes = new DefaultTableModel(new Object[] { "ID", "Nome", "Limite", "Dia de fechamento" }, 0) {
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
 				return false;
 			}
 		};
-		
+
 		funcaoPesquisaCliente(campoPesquisaCliente);
-		
+
 		tabelaClientes = new JTable(modeloTabelaClientes);
 		painelClientes.add(campoPesquisaCliente, BorderLayout.NORTH);
 		painelClientes.add(new JScrollPane(tabelaClientes), BorderLayout.CENTER);
 
+		funcaoAddClienteSelecionado(tabelaClientes);
+
 		JPanel painelResumo = new JPanel(new BorderLayout());
 		painelResumo.setBorder(BorderFactory.createTitledBorder("Resumo da Compra"));
 		labelTotal = new JLabel("Total: R$ 0,00");
-		JButton botaoFinalizar = new JButton("Finalizar Compra");
+		JButton btnFinalizarVenda = new JButton("Finalizar Compra");
 		JButton botaoExcluirProduto = new JButton("Excluir Produto");
 		JButton btnLimparCampos = new JButton("Limpar Lista");
 		JButton btnHome = new JButton("Home");
 
 		JPanel painelBotoes = new JPanel(new GridLayout(4, 1, 5, 5));
-		painelBotoes.add(botaoFinalizar);
+		painelBotoes.add(btnFinalizarVenda);
 		painelBotoes.add(botaoExcluirProduto);
 		painelBotoes.add(btnLimparCampos);
 		painelBotoes.add(btnHome);
@@ -137,10 +150,7 @@ public class RealizarVendaFrame extends JFrame {
 			new MainFrame().setVisible(true);
 		});
 
-		btnLimparCampos.addActionListener(e -> {
-			produtosSelecionados.clear();
-			atualizarListaSelecionados();
-		});
+		btnLimparCampos.addActionListener(e -> limparCampos());
 
 		botaoExcluirProduto.addActionListener(e -> {
 			int indexSelecionado = listaSelecionados.getSelectedIndex();
@@ -158,9 +168,35 @@ public class RealizarVendaFrame extends JFrame {
 			}
 		});
 
+		btnFinalizarVenda.addActionListener(e -> finalizarCompra());
+
 		carregarProdutos();
 		carregarClientes();
 		setVisible(true);
+	}
+
+	private void limparCampos() {
+		produtosSelecionados.clear();
+		campoClienteSelecionado.setText("");
+		atualizarListaSelecionados();
+
+	}
+
+	private void funcaoAddClienteSelecionado(JTable tabelaClientes2) {
+		tabelaClientes.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int row = tabelaClientes.getSelectedRow();
+					if (row != -1) {
+						idClienteSelecionado = (UUID) modeloTabelaClientes.getValueAt(row, 0);
+						String nomeCliente = (String) modeloTabelaClientes.getValueAt(row, 1);
+						campoClienteSelecionado.setText("Cliente: " + nomeCliente);
+					}
+				}
+			}
+		});
+
 	}
 
 	private void funcaoAddProdutosListaSelecionados(JList<String> listaSelecionados) {
@@ -171,6 +207,7 @@ public class RealizarVendaFrame extends JFrame {
 					int row = tabelaProdutos.getSelectedRow();
 					if (row != -1) {
 
+						UUID id = (UUID) modeloTabela.getValueAt(row, 0);
 						String descricao = (String) modeloTabela.getValueAt(row, 1);
 						BigDecimal preco = (BigDecimal) modeloTabela.getValueAt(row, 2);
 
@@ -179,7 +216,7 @@ public class RealizarVendaFrame extends JFrame {
 							produto.setQuantidade(produto.getQuantidade() + 1);
 
 						} else {
-							produtosSelecionados.put(descricao, new ProdutoSelecionado(descricao, preco, 1));
+							produtosSelecionados.put(descricao, new ProdutoSelecionado(id, descricao, preco, 1));
 						}
 
 						atualizarListaSelecionados();
@@ -226,7 +263,7 @@ public class RealizarVendaFrame extends JFrame {
 		});
 
 	}
-	
+
 	private void funcaoPesquisaCliente(JTextField campoPesquisaCliente) {
 		campoPesquisaCliente.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
@@ -251,7 +288,8 @@ public class RealizarVendaFrame extends JFrame {
 				Cliente[] clientes = cadastroClienteController.carregarClientes();
 				for (Cliente c : clientes) {
 					if (c.getNome().toLowerCase().contains(query)) {
-						clientesFiltrados.add(new Object[] { c.getId(), c.getNome(), c.getLimiteCompra(), c.getDiaFechamentoFatura() });
+						clientesFiltrados.add(new Object[] { c.getId(), c.getNome(), c.getLimiteCompra(),
+								c.getDiaFechamentoFatura() });
 					}
 				}
 
@@ -280,14 +318,15 @@ public class RealizarVendaFrame extends JFrame {
 			modeloTabela.addRow(new Object[] { c.getId(), c.getDescricao(), c.getPreco() });
 		}
 	}
-	
+
 	private void carregarClientes() {
 		Cliente[] clientes = cadastroClienteController.carregarClientes();
 		modeloTabelaClientes.setRowCount(0);
 		for (Cliente c : clientes) {
-			modeloTabelaClientes.addRow(new Object[] { c.getId(), c.getNome(), c.getLimiteCompra(), c.getDiaFechamentoFatura() });
+			modeloTabelaClientes
+					.addRow(new Object[] { c.getId(), c.getNome(), c.getLimiteCompra(), c.getDiaFechamentoFatura() });
 		}
-		
+
 	}
 
 	private void atualizarListaSelecionados() {
@@ -300,19 +339,56 @@ public class RealizarVendaFrame extends JFrame {
 			int quantidade = produto.getQuantidade();
 			BigDecimal preco = produto.getPreco();
 
-			// Calculando o valor total do produto com base na quantidade
 			BigDecimal totalItem = preco.multiply(new BigDecimal(quantidade));
 
-			// Atualiza o total da compra
 			totalCompra = totalCompra.add(totalItem);
 
-			// Adiciona o produto à lista de selecionados
 			listaModel.addElement(
 					descricao + " | Quantidade: " + quantidade + " | Preço: " + preco + " | Total: " + totalItem);
 		}
 
-		// Atualiza o valor total da compra no resumo
 		labelTotal.setText("Total: R$ " + totalCompra.setScale(2, RoundingMode.HALF_UP).toString());
+	}
+
+	private void finalizarCompra() {
+		if (campoClienteSelecionado.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Selecione um cliente antes de finalizar a compra.");
+			return;
+		}
+
+		List<Map<String, Object>> itens = new ArrayList<>();
+		for (Map.Entry<String, ProdutoSelecionado> entry : produtosSelecionados.entrySet()) {
+			ProdutoSelecionado produto = entry.getValue();
+			itens.add(Map.of("id", produto.getId(), "quantidade", produto.getQuantidade()));
+		}
+
+		Map<String, Object> vendaPayload = new HashMap<>();
+		vendaPayload.put("cliente", Map.of("id", idClienteSelecionado));
+		vendaPayload.put("dataVenda", LocalDate.now().toString());
+		vendaPayload.put("valorTotal", totalCompra.setScale(2, RoundingMode.HALF_UP));
+		vendaPayload.put("produtos", itens);
+
+		StringBuilder detalhesVenda = new StringBuilder();
+		detalhesVenda.append("Cliente: ").append(campoClienteSelecionado.getText()).append("\n\n");
+		detalhesVenda.append("Produtos Selecionados:\n");
+
+		for (ProdutoSelecionado produto : produtosSelecionados.values()) {
+			detalhesVenda.append(produto.getDescricao()).append(" | Qtd: ").append(produto.getQuantidade())
+					.append(" | Preço: R$ ").append(produto.getPreco()).append(" | Total: R$ ")
+					.append(produto.getPreco().multiply(new BigDecimal(produto.getQuantidade()))).append("\n");
+		}
+
+		detalhesVenda.append("\nValor Total: R$ ").append(totalCompra.setScale(2, RoundingMode.HALF_UP));
+
+		int resposta = JOptionPane.showConfirmDialog(this, detalhesVenda.toString(), "Confirmar Compra",
+				JOptionPane.YES_NO_OPTION);
+
+		if (resposta == JOptionPane.YES_OPTION) {
+			JOptionPane.showMessageDialog(this, "Compra finalizada com sucesso!", "Sucesso",
+					JOptionPane.INFORMATION_MESSAGE);
+			new RealizarVendaController(new RestTemplate()).finalizarVenda(vendaPayload);
+			limparCampos();
+		}
 	}
 
 	public static void main(String[] args) {
