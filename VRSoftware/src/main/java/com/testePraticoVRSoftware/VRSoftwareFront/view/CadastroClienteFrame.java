@@ -26,13 +26,14 @@ import org.springframework.web.client.RestTemplate;
 
 import com.testePraticoVRSoftware.VRSoftware.model.Cliente;
 import com.testePraticoVRSoftware.VRSoftwareFront.controller.CadastroClienteController;
+import com.testePraticoVRSoftware.VRSoftwareFront.utils.VRSoftwareUtils;
 
 public class CadastroClienteFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JTextField txtNome, txtLimiteCompra, txtDiaFechamento;
 	private JTextArea areaInformacoes;
-	private JButton btnSalvar, btnAtualizarLista, btnAtualizar, btnExcluir, btnLimparCampos;
+	private JButton btnSalvar, btnAtualizarLista, btnAtualizar, btnExcluir, btnLimparCampos, btnHome;
 	private JTable tabelaClientes;
 	private DefaultTableModel modeloTabela;
 	private CadastroClienteController cadastroClienteController;
@@ -41,14 +42,10 @@ public class CadastroClienteFrame extends JFrame {
 	public CadastroClienteFrame(RestTemplate restTemplate) {
 		cadastroClienteController = new CadastroClienteController(this, restTemplate);
 
-		setTitle("VR Software - Cadastro de Clientes");
-		setSize(1080, 800);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setLocationRelativeTo(null);
+		VRSoftwareUtils.configurarJanela(this, "VR Software - Cadastro de Clientes", 1080, 800);
 
 		JPanel panel = new JPanel();
-		GroupLayout layout = new GroupLayout(panel);
-		panel.setLayout(layout);
+		GroupLayout layout = VRSoftwareUtils.configurarPainelComGroupLayout(panel);
 
 		JLabel lblNome = new JLabel("Nome:");
 		txtNome = new JTextField();
@@ -62,6 +59,7 @@ public class CadastroClienteFrame extends JFrame {
 		btnAtualizar = new JButton("Atualizar Registro");
 		btnExcluir = new JButton("Excluir Registro");
 		btnLimparCampos = new JButton("Limpar Campos");
+		btnHome = new JButton("Home");
 
 		btnAtualizar.setEnabled(false);
 
@@ -81,7 +79,6 @@ public class CadastroClienteFrame extends JFrame {
 		String[] colunas = { "ID", "Nome", "Limite de Compra", "Dia Fechamento" };
 		modeloTabela = new DefaultTableModel(colunas, 0) {
 			private static final long serialVersionUID = 1L;
-
 			@Override
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
 				return false;
@@ -99,6 +96,10 @@ public class CadastroClienteFrame extends JFrame {
 		btnAtualizar.addActionListener(e -> atualizarCliente());
 		btnExcluir.addActionListener(e -> excluirClientes());
 		btnLimparCampos.addActionListener(e -> limparCampos());
+		btnHome.addActionListener(e -> {
+			dispose();
+			new MainFrame().setVisible(true);
+		});
 
 		carregarClientes();
 
@@ -152,7 +153,6 @@ public class CadastroClienteFrame extends JFrame {
 	}
 
 	private void configuracaoInstrucoes(JTextArea areaInformacoes) {
-
 		areaInformacoes.setText("Preencha os campos corretamente.\n" + "- Nome: Apenas letras.\n"
 				+ "- Limite de Compra: Apenas números.\n" + "- Dia de Fechamento: Número entre 1 e 31.\n"
 				+ "Clique em 'Salvar' para cadastrar.\n"
@@ -180,7 +180,8 @@ public class CadastroClienteFrame extends JFrame {
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 								.addGroup(layout.createSequentialGroup().addComponent(btnAtualizarLista).addGap(10)
 										.addComponent(btnSalvar).addGap(10).addComponent(btnAtualizar).addGap(10)
-										.addComponent(btnExcluir).addGap(10).addComponent(btnLimparCampos))))
+										.addComponent(btnExcluir).addGap(10).addComponent(btnLimparCampos).addGap(10)
+										.addComponent(btnHome))))
 				.addComponent(scrollInfo, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE));
 
 		layout.setVerticalGroup(layout.createSequentialGroup()
@@ -192,7 +193,8 @@ public class CadastroClienteFrame extends JFrame {
 						.addComponent(txtDiaFechamento))
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(btnAtualizarLista)
 						.addComponent(btnSalvar).addComponent(btnAtualizar).addComponent(btnExcluir)
-						.addComponent(btnLimparCampos)));
+						.addComponent(btnLimparCampos)
+						.addComponent(btnHome)));
 
 	}
 
@@ -285,7 +287,7 @@ public class CadastroClienteFrame extends JFrame {
 				cadastroClienteController.excluirCliente(idCliente);
 				JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!", "Sucesso",
 						JOptionPane.INFORMATION_MESSAGE);
-				carregarClientes(); // Atualiza a lista após a exclusão
+				carregarClientes();
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(this, "Erro ao excluir cliente: " + e.getMessage(), "Erro",
 						JOptionPane.ERROR_MESSAGE);

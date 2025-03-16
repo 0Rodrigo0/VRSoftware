@@ -51,18 +51,15 @@ public class CadastroClienteService {
 	public void atualizarCliente(UUID idCliente, String novoNome, String novoLimite, String novoDiaFechamento) {
 		String url = "http://localhost:8080/api/cliente/" + idCliente;
 		HttpHeaders headers = new HttpHeaders();
-	    headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
-	    String jsonBody = "{"
-	        + "\"nome\":\"" + novoNome + "\","
-	        + "\"limiteCompra\":\"" + novoLimite + "\","
-	        + "\"diaFechamentoFatura\":\"" + novoDiaFechamento + "\""
-	        + "}";
-	    
-	    HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
+		String jsonBody = "{" + "\"nome\":\"" + novoNome + "\"," + "\"limiteCompra\":\"" + novoLimite + "\","
+				+ "\"diaFechamentoFatura\":\"" + novoDiaFechamento + "\"" + "}";
+
+		HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
 
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
-		
+
 	}
 }

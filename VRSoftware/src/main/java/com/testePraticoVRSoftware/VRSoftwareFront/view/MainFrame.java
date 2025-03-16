@@ -37,7 +37,7 @@ public class MainFrame extends JFrame {
 		btnCadastrarProduto.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new CadastroProdutoFrame().setVisible(true);
+				new CadastroProdutoFrame(null).setVisible(true);
 				dispose();
 			}
 		});
