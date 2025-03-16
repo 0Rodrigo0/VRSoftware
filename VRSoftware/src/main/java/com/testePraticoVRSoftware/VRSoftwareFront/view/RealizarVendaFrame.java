@@ -30,6 +30,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.testePraticoVRSoftware.VRSoftware.model.Cliente;
@@ -37,6 +38,7 @@ import com.testePraticoVRSoftware.VRSoftware.model.Produto;
 import com.testePraticoVRSoftware.VRSoftwareFront.controller.CadastroClienteController;
 import com.testePraticoVRSoftware.VRSoftwareFront.controller.CadastroProdutoController;
 import com.testePraticoVRSoftware.VRSoftwareFront.controller.RealizarVendaController;
+import com.testePraticoVRSoftware.VRSoftwareFront.service.RealizarVendaService;
 
 public class RealizarVendaFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -387,6 +389,7 @@ public class RealizarVendaFrame extends JFrame {
 			JOptionPane.showMessageDialog(this, "Compra finalizada com sucesso!", "Sucesso",
 					JOptionPane.INFORMATION_MESSAGE);
 			new RealizarVendaController(new RestTemplate()).finalizarVenda(vendaPayload);
+						
 			limparCampos();
 		}
 	}

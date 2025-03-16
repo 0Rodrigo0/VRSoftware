@@ -36,6 +36,4 @@ public class Produto {
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<VendaProduto> vendas;
 
-	private Boolean ativo = true;
-
 }

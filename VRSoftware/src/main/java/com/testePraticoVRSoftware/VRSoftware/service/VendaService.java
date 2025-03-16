@@ -71,7 +71,8 @@ public class VendaService {
 		Venda vendaSalva = vendaRepository.save(venda);
 
 		salvarHistoricoVenda(venda);
-		verificaVencimentoFatura(cliente);
+		String relatorio = verificaVencimentoFatura(cliente);
+		vendaSalva.setRelatorioCredito(relatorio);
 
 		return vendaSalva;
 	}
@@ -104,37 +105,37 @@ public class VendaService {
 
 	@Transactional
 	public void salvarHistoricoVenda(Venda venda) {
-	    List<VendaProdutoHistorico> historico = venda.getProdutos().stream().map(vendaProduto -> {
-	        Produto produto = vendaProduto.getProduto();
-	        Long quantidade = Long.valueOf(vendaProduto.getQuantidade());
-	        BigDecimal precoUnitario = produto.getPreco();
+		List<VendaProdutoHistorico> historico = venda.getProdutos().stream().map(vendaProduto -> {
+			Produto produto = vendaProduto.getProduto();
+			Long quantidade = Long.valueOf(vendaProduto.getQuantidade());
+			BigDecimal precoUnitario = produto.getPreco();
 
-	        BigDecimal valorTotalProduto = precoUnitario.multiply(new BigDecimal(quantidade));
+			BigDecimal valorTotalProduto = precoUnitario.multiply(new BigDecimal(quantidade));
 
-	        VendaProdutoHistorico registro = new VendaProdutoHistorico();
-	        registro.setVendaId(venda.getId());
-	        registro.setClienteId(venda.getCliente().getId());
-	        registro.setClienteNome(venda.getCliente().getNome());
-	        registro.setProdutoId(produto.getId());
-	        registro.setProdutoDescricao(produto.getDescricao());
-	        registro.setProdutoPreco(precoUnitario);
-	        registro.setDataVenda(venda.getDataVenda());
-	        registro.setValorTotal(valorTotalProduto);
+			VendaProdutoHistorico registro = new VendaProdutoHistorico();
+			registro.setVendaId(venda.getId());
+			registro.setClienteId(venda.getCliente().getId());
+			registro.setClienteNome(venda.getCliente().getNome());
+			registro.setProdutoId(produto.getId());
+			registro.setProdutoDescricao(produto.getDescricao());
+			registro.setProdutoPreco(precoUnitario);
+			registro.setDataVenda(venda.getDataVenda());
+			registro.setValorTotal(valorTotalProduto);
 
-	        return registro;
-	    }).collect(Collectors.toList());
+			return registro;
+		}).collect(Collectors.toList());
 
-	    vendaProdutoHistoricoRepository.saveAll(historico);
+		vendaProdutoHistoricoRepository.saveAll(historico);
 	}
 
-
-	private void verificaVencimentoFatura(Cliente cliente) {
+	private String verificaVencimentoFatura(Cliente cliente) {
 		LocalDate dataFechamento = calcularDiaVencimento(cliente.getDiaFechamentoFatura());
+		String saldoCreditoRelatorio = null;
 		if (LocalDate.now().isAfter(dataFechamento)) {
-			String saldoCreditoRelatorio = calcularSaldoCredito(cliente);
+			saldoCreditoRelatorio = calcularSaldoCredito(cliente);
 			System.out.println(saldoCreditoRelatorio);
 		}
-
+       return saldoCreditoRelatorio;
 	}
 
 	private String calcularSaldoCredito(Cliente cliente) {
