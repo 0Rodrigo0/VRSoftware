@@ -2,6 +2,7 @@ package com.testePraticoVRSoftware.VRSoftware.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import com.testePraticoVRSoftware.VRSoftware.model.VendaProdutoHistorico;
 import com.testePraticoVRSoftware.VRSoftware.repository.ClienteRepository;
 import com.testePraticoVRSoftware.VRSoftware.repository.ProdutoRepository;
 import com.testePraticoVRSoftware.VRSoftware.repository.VendaProdutoHistoricoRepository;
+import com.testePraticoVRSoftware.VRSoftware.repository.VendaProdutoRepository;
 import com.testePraticoVRSoftware.VRSoftware.repository.VendaRepository;
 
 import jakarta.inject.Inject;
@@ -36,6 +38,9 @@ public class VendaService {
 
 	@Inject
 	private ProdutoRepository produtoRepository;
+	
+	@Inject
+	private VendaProdutoRepository vendaProdutoRepository;
 
 	@Inject
 	private VendaProdutoHistoricoRepository vendaProdutoHistoricoRepository;
@@ -87,13 +92,47 @@ public class VendaService {
 
 	public Optional<Venda> atualizarVenda(UUID id, Venda vendaAtualizada) {
 		return vendaRepository.findById(id).map(venda -> {
+			Venda vendaSalva = new Venda();
 			venda.setCliente(vendaAtualizada.getCliente());
 			venda.setDataVenda(vendaAtualizada.getDataVenda());
 			venda.setValorTotal(vendaAtualizada.getValorTotal());
-			venda.setProdutos(vendaAtualizada.getProdutos());
-			return vendaRepository.save(venda);
+
+			List<VendaProduto> produtosAtualizados = new ArrayList<>();
+			for (VendaProduto produtoAtualizado : vendaAtualizada.getProdutos()) {
+				Produto produto = new Produto();
+			    Optional<VendaProduto> vendaProdutoOptional = vendaProdutoRepository.findById(produtoAtualizado.getId());
+
+
+				if (vendaProdutoOptional.get() != null) {
+					Optional<Produto> produtoOptional = produtoRepository.findById(vendaProdutoOptional.get().getProduto().getId());
+					if (produtoOptional.isPresent()) {
+						produto = produtoOptional.get();
+					}
+				}
+
+				produtoAtualizado.setVenda(vendaAtualizada);
+				produtoAtualizado.setProduto(produto);
+				produto.setVendas(produtosAtualizados);
+				vendaSalva = vendaRepository.save(venda);
+				produtoRepository.save(produto);
+				
+				produtosAtualizados.add(produtoAtualizado);
+			}
+			venda.setProdutos(produtosAtualizados);
+
+			return vendaSalva;
 		});
 	}
+
+//	public Optional<Venda> atualizarVenda(UUID id, Venda vendaAtualizada) {
+//		return vendaRepository.findById(id).map(venda -> {
+//			venda.setCliente(vendaAtualizada.getCliente());
+//			venda.setDataVenda(vendaAtualizada.getDataVenda());
+//			venda.setValorTotal(vendaAtualizada.getValorTotal());
+//			venda.setProdutos(vendaAtualizada.getProdutos());
+//			return vendaRepository.save(venda);
+//		});
+//	}
 
 	public void excluir(UUID id) {
 		vendaRepository.deleteById(id);
@@ -135,7 +174,7 @@ public class VendaService {
 			saldoCreditoRelatorio = calcularSaldoCredito(cliente);
 			System.out.println(saldoCreditoRelatorio);
 		}
-       return saldoCreditoRelatorio;
+		return saldoCreditoRelatorio;
 	}
 
 	private String calcularSaldoCredito(Cliente cliente) {

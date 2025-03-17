@@ -6,6 +6,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.UUID;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -55,13 +58,18 @@ public class GerenciarVendasFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = tabelaVendas.getSelectedRow();
                 if (selectedRow >= 0) {
-                    JOptionPane.showMessageDialog(null, "Atualizando registro...");
+                    UUID id = (UUID) modeloTabela.getValueAt(selectedRow, 0);
+                    LocalDate dataVenda = (LocalDate) modeloTabela.getValueAt(selectedRow, 1);
+                    BigDecimal valorTotal = (BigDecimal) modeloTabela.getValueAt(selectedRow, 2);
+                    UUID clienteId = (UUID) modeloTabela.getValueAt(selectedRow, 3);
+
+                    new EditarVendaDialogFrame(id, dataVenda, valorTotal, clienteId, realizarVendaController).setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(null, "Selecione um registro para atualizar.");
                 }
             }
         });
-
+        
         btnExcluir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

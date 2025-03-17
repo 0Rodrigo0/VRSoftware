@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -304,7 +303,6 @@ public class RealizarVendaFrame extends JFrame {
 	public void atualizarListaProdutos(Object[][] produtos) {
 		modeloTabela.setRowCount(0);
 		for (Object[] produto : produtos) {
-			System.out.println(Arrays.toString(produto));
 			modeloTabela.addRow(produto);
 		}
 	}
@@ -385,7 +383,7 @@ public class RealizarVendaFrame extends JFrame {
 			JOptionPane.showMessageDialog(this, "Compra finalizada com sucesso!", "Sucesso",
 					JOptionPane.INFORMATION_MESSAGE);
 			new RealizarVendaController(new RestTemplate()).finalizarVenda(vendaPayload);
-						
+
 			limparCampos();
 		}
 	}

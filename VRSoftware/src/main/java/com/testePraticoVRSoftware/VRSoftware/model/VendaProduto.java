@@ -3,6 +3,7 @@ package com.testePraticoVRSoftware.VRSoftware.model;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.google.gson.annotations.Expose;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +22,7 @@ import lombok.Setter;
 public class VendaProduto {
 
 	@Id
+	@Expose
     @GeneratedValue(generator = "uuid2")
     private UUID id;
 
@@ -29,10 +31,12 @@ public class VendaProduto {
 	@JoinColumn(name = "venda_id", nullable = false)
 	private Venda venda;
 
+	@Expose
 	@ManyToOne
 	@JoinColumn(name = "produto_id", nullable = false)
 	private Produto produto;
-
+	
+	@Expose
 	@Column(nullable = false)
 	private Integer quantidade;
 

@@ -1,6 +1,7 @@
 package com.testePraticoVRSoftware.VRSoftwareFront.controller;
 
 import java.util.Map;
+import java.util.UUID;
 
 import javax.swing.JOptionPane;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.testePraticoVRSoftware.VRSoftware.model.Cliente;
 import com.testePraticoVRSoftware.VRSoftware.model.Venda;
 import com.testePraticoVRSoftware.VRSoftwareFront.service.RealizarVendaService;
 
@@ -53,6 +55,16 @@ public class RealizarVendaController {
 
 	public Venda[] listarVendas() {
 		return realizarVendaService.listarVendas();
+	}
+
+	public void atualizarVenda(Venda vendaAtualizada) {
+		realizarVendaService.atualizaerVenda(vendaAtualizada);
+	}
+
+	public Cliente buscaCliente(UUID novoClienteId) {
+		Cliente novoCliente = realizarVendaService.buscaCliente(novoClienteId);
+		return novoCliente;
+		
 	}
 
 }

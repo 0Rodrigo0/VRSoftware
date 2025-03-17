@@ -33,7 +33,7 @@ public class Produto {
 	private BigDecimal preco;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
 	private List<VendaProduto> vendas;
 
 }
