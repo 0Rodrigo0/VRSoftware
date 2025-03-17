@@ -6,7 +6,6 @@ import java.util.UUID;
 import javax.swing.JOptionPane;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +18,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Controller
 public class RealizarVendaController {
 	private final RealizarVendaService realizarVendaService;
 	private final RestTemplate restTemplate;

@@ -1,7 +1,6 @@
 package com.testePraticoVRSoftware.VRSoftwareFront.controller;
 
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import com.testePraticoVRSoftware.VRSoftware.model.VendaProdutoHistorico;
@@ -13,7 +12,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Controller
 public class VendaProdutoHistoricoController {
 
 	private VendaProdutoHistoricoFrame vendaProdutoHistoricoFrame;
