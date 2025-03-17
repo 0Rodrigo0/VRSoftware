@@ -34,9 +34,9 @@ O frontend foi desenvolvido com **Java Swing**, utilizando a biblioteca **JDBC**
 3. Abra o arquivo `application.properties` e configure as credenciais do banco de dados PostgreSQL:
 
     ```properties
-    spring.datasource.url=jdbc:postgresql://localhost:5432/nome_do_banco
-    spring.datasource.username=seu_usuario
-    spring.datasource.password=sua_senha
+    spring.datasource.url=jdbc:postgresql://localhost:5432/vrsoftware
+    spring.datasource.username=postgres
+    spring.datasource.password=000001
     spring.jpa.hibernate.ddl-auto=update
     ```
 
