@@ -58,6 +58,15 @@ public class RealizarVendaFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
+		
+		JLabel labelExplicativo = new JLabel("<html><b>Como realizar uma venda:</b><br>"
+	            + "1. Pesquise um produto na lista e clique 2x para adicioná-lo.<br>"
+	            + "2. Selecione um cliente clicando 2x na lista de clientes.<br>"
+	            + "3. Para adicionar o mesmo produto novamente, clique 2x nele novamente.<br>"
+	            + "4. Clique em 'Finalizar Compra' para concluir a venda.<br>"
+	            + "5. Use os botões para excluir itens ou limpar a lista, se necessário.</html>");
+	    labelExplicativo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+	    add(labelExplicativo, BorderLayout.NORTH);
 
 		cadastroProdutoController = new CadastroProdutoController(this, restTemplate);
 		cadastroClienteController = new CadastroClienteController(this, restTemplate);

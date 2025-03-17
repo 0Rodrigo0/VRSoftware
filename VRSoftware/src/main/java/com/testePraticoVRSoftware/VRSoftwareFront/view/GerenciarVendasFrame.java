@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
@@ -30,7 +31,6 @@ public class GerenciarVendasFrame extends JFrame {
     private static final long serialVersionUID = 1L;
     private JTable tabelaVendas;
     private DefaultTableModel modeloTabela;
-
     private RealizarVendaController realizarVendaController;
 
     public GerenciarVendasFrame(RestTemplate restTemplate) {
@@ -40,6 +40,13 @@ public class GerenciarVendasFrame extends JFrame {
         setSize(1080, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        
+        JLabel descricaoLabel = new JLabel(
+            "<html><center>Bem-vindo à tela de gerenciamento de vendas!<br>" +
+            "Aqui você pode visualizar, editar e excluir registros de vendas.<br>" +
+            "Selecione uma venda na tabela e escolha a ação desejada.</center></html>",
+            SwingConstants.CENTER);
+        descricaoLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
         JLabel tituloLabel = new JLabel("Gerenciar Vendas");
         tituloLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -119,11 +126,13 @@ public class GerenciarVendasFrame extends JFrame {
         constraints.gridy = 0;
         constraints.gridwidth = 3;
         constraints.insets = new Insets(10, 10, 10, 10);
+        add(descricaoLabel, constraints);
+
+        constraints.gridy = 1;
         add(tituloLabel, constraints);
 
         constraints.gridwidth = 1;
-        constraints.gridy = 1;
-        constraints.insets = new Insets(10, 10, 10, 10);
+        constraints.gridy = 2;
         add(btnAtualizar, constraints);
 
         constraints.gridx = 1;
@@ -133,9 +142,8 @@ public class GerenciarVendasFrame extends JFrame {
         add(btnHome, constraints);
 
         constraints.gridx = 0;
-        constraints.gridy = 2;
+        constraints.gridy = 3;
         constraints.gridwidth = 3;
-        constraints.insets = new Insets(10, 10, 10, 10);
         add(scrollPane, constraints);
 
         populateTable();
