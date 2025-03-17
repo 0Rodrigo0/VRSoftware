@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.testePraticoVRSoftware.VRSoftware.model.Venda;
 import com.testePraticoVRSoftware.VRSoftwareFront.service.RealizarVendaService;
 
 import lombok.Getter;
@@ -48,6 +49,10 @@ public class RealizarVendaController {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Erro ao comunicar com o servidor: " + e.getMessage());
 		}
+	}
+
+	public Venda[] listarVendas() {
+		return realizarVendaService.listarVendas();
 	}
 
 }

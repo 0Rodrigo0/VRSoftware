@@ -303,7 +303,6 @@ public class RealizarVendaFrame extends JFrame {
 
 	public void atualizarListaProdutos(Object[][] produtos) {
 		modeloTabela.setRowCount(0);
-		System.out.println("Produtos carregados:");
 		for (Object[] produto : produtos) {
 			System.out.println(Arrays.toString(produto));
 			modeloTabela.addRow(produto);
