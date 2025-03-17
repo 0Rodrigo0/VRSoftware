@@ -13,27 +13,26 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 public class MainFrame extends JFrame {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	public MainFrame() {
-		
+
 		setTitle("VR Software - Sistema de Vendas");
-		setSize(1080, 800); 
+		setSize(1080, 800);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 
-		
 		JLabel tituloLabel = new JLabel("Bem-vindo ao Sistema de Vendas");
-		tituloLabel.setFont(new Font("Arial", Font.BOLD, 16)); 
-		tituloLabel.setHorizontalAlignment(JLabel.CENTER); 
+		tituloLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		tituloLabel.setHorizontalAlignment(JLabel.CENTER);
 
-		
 		JButton btnCadastrarProduto = new JButton("Cadastrar Produto");
 		JButton btnCadastrarCliente = new JButton("Cadastrar Cliente");
 		JButton btnRealizarVenda = new JButton("Realizar Venda");
+		JButton btnGerenciarVendas = new JButton("Gerenciar Vendas");
+		JButton btnRelatorioGerencial = new JButton("Relatório Gerencial");
 
-		
 		btnCadastrarProduto.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -58,6 +57,22 @@ public class MainFrame extends JFrame {
 			}
 		});
 
+		btnGerenciarVendas.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new GerenciarVendasFrame(null).setVisible(true);
+				dispose();
+			}
+		});
+
+		btnRelatorioGerencial.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new VendaProdutoHistoricoFrame(null).setVisible(true);
+				dispose();
+			}
+		});
+
 		setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -78,6 +93,12 @@ public class MainFrame extends JFrame {
 
 		constraints.gridy = 3;
 		add(btnRealizarVenda, constraints);
+		
+		constraints.gridy = 4;
+		add(btnGerenciarVendas, constraints);
+		
+		constraints.gridy = 5;
+		add(btnRelatorioGerencial, constraints);
 	}
 
 	public static void main(String[] args) {

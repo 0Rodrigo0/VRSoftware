@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.swing.JOptionPane;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import com.testePraticoVRSoftware.VRSoftware.model.Produto;
@@ -12,6 +13,7 @@ import com.testePraticoVRSoftware.VRSoftwareFront.service.CadastroProdutoService
 import com.testePraticoVRSoftware.VRSoftwareFront.view.CadastroProdutoFrame;
 import com.testePraticoVRSoftware.VRSoftwareFront.view.RealizarVendaFrame;
 
+@Controller
 public class CadastroProdutoController {
 
 	private CadastroProdutoFrame cadastroProdutoFrame;
