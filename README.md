@@ -51,25 +51,13 @@ O frontend foi desenvolvido com **Java Swing**, utilizando a biblioteca **JDBC**
 
 ## Como Rodar o Frontend
 
-1. Clone o repositório do frontend para sua máquina:
+1. O projeto FrontEnd esta junto com o projeto do Backend, portanto estão no mesmo repositório.
 
-    ```bash
-    git clone https://github.com/usuário/nome-do-repositório-frontend.git
-    ```
+2. Abra o projeto no **Eclipse** ou outra IDE Java.
 
-2. Navegue até o diretório do frontend:
+3. Certifique-se de que o **JDK 17** (ou superior) está configurado na sua IDE.
 
-    ```bash
-    cd nome-do-repositório-frontend
-    ```
-
-3. Abra o projeto no **Eclipse** ou outra IDE Java.
-
-4. Certifique-se de que o **JDK 17** (ou superior) está configurado na sua IDE.
-
-5. No código do frontend, a classe `VendaProdutoHistoricoFrame` realiza a comunicação com o backend. Certifique-se de que o **backend está rodando** na URL configurada (`http://localhost:8080`).
-
-6. Execute a classe `VendaProdutoHistoricoFrame` para iniciar o frontend.
+4. Execute a classe `MainFrame` para iniciar o frontend.
 
 ## Funcionalidades
 
