@@ -40,7 +40,7 @@ O frontend foi desenvolvido com **Java Swing**, utilizando a biblioteca **JDBC**
     spring.jpa.hibernate.ddl-auto=update
     ```
 
-4. Execute o arquivo VrSoftwareApplication.java:
+4. Execute o arquivo `VrSoftwareApplication.java`.
 
 5. O backend estará disponível na URL: `http://localhost:8080`.
 
