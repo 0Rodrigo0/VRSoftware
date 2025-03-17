@@ -67,7 +67,9 @@ public class GerenciarVendasFrame extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(null, "Selecione um registro para atualizar.");
                 }
+                carregarVendas();
             }
+            
         });
         
         btnExcluir.addActionListener(new ActionListener() {
@@ -75,12 +77,31 @@ public class GerenciarVendasFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = tabelaVendas.getSelectedRow();
                 if (selectedRow >= 0) {
-                    JOptionPane.showMessageDialog(null, "Excluindo registro...");
+                    int confirmacao = JOptionPane.showConfirmDialog(null, 
+                        "Tem certeza que deseja excluir esta venda?", 
+                        "Confirmação", JOptionPane.YES_NO_OPTION);
+                    
+                    if (confirmacao == JOptionPane.YES_OPTION) {
+                        try {
+                            UUID idVenda = (UUID) tabelaVendas.getValueAt(selectedRow, 0);
+                            
+                            realizarVendaController.excluirVenda(idVenda);
+                            
+                            carregarVendas();
+                            
+                            JOptionPane.showMessageDialog(null, "Venda excluída com sucesso!");
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(null, 
+                                "Erro ao excluir venda: " + ex.getMessage(), 
+                                "Erro", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, "Selecione um registro para excluir.");
                 }
             }
         });
+
 
         btnHome.addActionListener(new ActionListener() {
             @Override

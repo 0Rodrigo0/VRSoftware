@@ -38,7 +38,7 @@ public class VendaService {
 
 	@Inject
 	private ProdutoRepository produtoRepository;
-	
+
 	@Inject
 	private VendaProdutoRepository vendaProdutoRepository;
 
@@ -100,11 +100,12 @@ public class VendaService {
 			List<VendaProduto> produtosAtualizados = new ArrayList<>();
 			for (VendaProduto produtoAtualizado : vendaAtualizada.getProdutos()) {
 				Produto produto = new Produto();
-			    Optional<VendaProduto> vendaProdutoOptional = vendaProdutoRepository.findById(produtoAtualizado.getId());
-
+				Optional<VendaProduto> vendaProdutoOptional = vendaProdutoRepository
+						.findById(produtoAtualizado.getId());
 
 				if (vendaProdutoOptional.get() != null) {
-					Optional<Produto> produtoOptional = produtoRepository.findById(vendaProdutoOptional.get().getProduto().getId());
+					Optional<Produto> produtoOptional = produtoRepository
+							.findById(vendaProdutoOptional.get().getProduto().getId());
 					if (produtoOptional.isPresent()) {
 						produto = produtoOptional.get();
 					}
@@ -115,7 +116,7 @@ public class VendaService {
 				produto.setVendas(produtosAtualizados);
 				vendaSalva = vendaRepository.save(venda);
 				produtoRepository.save(produto);
-				
+
 				produtosAtualizados.add(produtoAtualizado);
 			}
 			venda.setProdutos(produtosAtualizados);

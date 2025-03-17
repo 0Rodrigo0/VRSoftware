@@ -67,4 +67,9 @@ public class RealizarVendaController {
 		
 	}
 
+	public void excluirVenda(UUID idVenda) {
+		realizarVendaService.excluirVenda(idVenda);
+		
+	}
+
 }

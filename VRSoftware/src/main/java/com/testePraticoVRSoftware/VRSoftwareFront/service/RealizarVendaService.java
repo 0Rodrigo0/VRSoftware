@@ -102,4 +102,11 @@ public class RealizarVendaService {
 		
 	}
 
+	public void excluirVenda(UUID idVenda) {
+		String url = "http://localhost:8080/api/venda/" + idVenda;
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.delete(url);
+		
+	}
+
 }
