@@ -198,7 +198,7 @@ public class RealizarVendaFrame extends JFrame {
 					if (row != -1) {
 						idClienteSelecionado = (UUID) modeloTabelaClientes.getValueAt(row, 0);
 						String nomeCliente = (String) modeloTabelaClientes.getValueAt(row, 1);
-						campoClienteSelecionado.setText("Cliente: " + nomeCliente);
+						campoClienteSelecionado.setText(nomeCliente);
 					}
 				}
 			}

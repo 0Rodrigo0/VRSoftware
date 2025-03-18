@@ -2,7 +2,6 @@ package com.testePraticoVRSoftware.VRSoftware.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,48 +91,38 @@ public class VendaService {
 
 	public Optional<Venda> atualizarVenda(UUID id, Venda vendaAtualizada) {
 		return vendaRepository.findById(id).map(venda -> {
-			Venda vendaSalva = new Venda();
+
 			venda.setCliente(vendaAtualizada.getCliente());
 			venda.setDataVenda(vendaAtualizada.getDataVenda());
 			venda.setValorTotal(vendaAtualizada.getValorTotal());
 
-			List<VendaProduto> produtosAtualizados = new ArrayList<>();
+			List<VendaProduto> produtosOriginais = venda.getProdutos();
+			produtosOriginais.clear();
+
 			for (VendaProduto produtoAtualizado : vendaAtualizada.getProdutos()) {
-				Produto produto = new Produto();
 				Optional<VendaProduto> vendaProdutoOptional = vendaProdutoRepository
 						.findById(produtoAtualizado.getId());
 
-				if (vendaProdutoOptional.get() != null) {
+				if (vendaProdutoOptional.isPresent()) {
+					VendaProduto vendaProdutoExistente = vendaProdutoOptional.get();
+
 					Optional<Produto> produtoOptional = produtoRepository
-							.findById(vendaProdutoOptional.get().getProduto().getId());
-					if (produtoOptional.isPresent()) {
-						produto = produtoOptional.get();
-					}
+							.findById(vendaProdutoExistente.getProduto().getId());
+					produtoOptional.ifPresent(produto -> {
+						vendaProdutoExistente.setProduto(produto);
+						vendaProdutoExistente.setVenda(venda);
+					});
+
+					produtosOriginais.add(vendaProdutoExistente);
+				} else {
+					produtoAtualizado.setVenda(venda);
+					produtosOriginais.add(produtoAtualizado);
 				}
-
-				produtoAtualizado.setVenda(vendaAtualizada);
-				produtoAtualizado.setProduto(produto);
-				produto.setVendas(produtosAtualizados);
-				vendaSalva = vendaRepository.save(venda);
-				produtoRepository.save(produto);
-
-				produtosAtualizados.add(produtoAtualizado);
 			}
-			venda.setProdutos(produtosAtualizados);
 
-			return vendaSalva;
-		});
+			return Optional.of(vendaRepository.save(venda));
+		}).orElse(Optional.empty());
 	}
-
-//	public Optional<Venda> atualizarVenda(UUID id, Venda vendaAtualizada) {
-//		return vendaRepository.findById(id).map(venda -> {
-//			venda.setCliente(vendaAtualizada.getCliente());
-//			venda.setDataVenda(vendaAtualizada.getDataVenda());
-//			venda.setValorTotal(vendaAtualizada.getValorTotal());
-//			venda.setProdutos(vendaAtualizada.getProdutos());
-//			return vendaRepository.save(venda);
-//		});
-//	}
 
 	public void excluir(UUID id) {
 		vendaRepository.deleteById(id);
