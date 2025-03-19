@@ -10,6 +10,7 @@ O backend foi desenvolvido utilizando o framework **Spring Boot** com a persist�
 1. **JDK 17** (ou superior) - Para compilar e rodar o código Java.
 2. **PostgreSQL** - Banco de dados relacional utilizado para persistência de dados.
 3. **Maven** - Ferramenta de build para o backend.
+4.  **Lombok** - Para as anotações no projeto.
 
 ### Frontend
 O frontend foi desenvolvido com **Java Swing**, utilizando a biblioteca **JDBC** para comunicação com o backend. Para rodar o frontend, você precisará de:
